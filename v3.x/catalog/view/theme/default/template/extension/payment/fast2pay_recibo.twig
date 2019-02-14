@@ -1,0 +1,56 @@
+{{ header }}
+
+{% if (invoice.id is not defined) %}
+
+<div class="alert alert-error">Ops, problema ao consulta invoice!</div>
+
+{% else %}
+
+<div id="recibo_fast2pay" class="container" id="container">
+
+    <div style="text-align: center;">
+        <h2>Resultado da Transa&ccedil;&atilde;o</h2>
+        <p>
+            A transa&ccedil;&atilde;o <b>{{ invoice.transaction_number }}</b> relacionada ao seu pedido <b>#{{ pedido['order_id'] }}</b> encontra-se no status <b>
+                {% if(invoice.status=='pending') %}
+                Pendente
+                {% elseif(invoice.status=='canceled') %}
+                Cancelada
+                {% elseif(invoice.status=='paid') %}
+                Paga
+                {% else %}
+                Aguardando Pagamento
+                {% endif %}
+            </b>.
+            <br><br>
+            <b>Total a pagar:</b> {{ invoice.total }}{{ invoice.installments is empty?'':' em '~invoice.installments~'x' }}<br>
+            <b>Forma de Pagamento:</b> {{ invoice.bank_slip.barcode is defined?'Boleto Banc&aacute;rio':'Cart&atilde;o de Cr&eacute;dito' }}<br>
+
+            {% if (invoice.bank_slip.digitable_line is defined and invoice.bank_slip.digitable_line is not empty) %}
+            <b>Linha Digit&aacute;vel:</b> {{ invoice.bank_slip.digitable_line }}<br>
+            <img src="app/fast2pay/barra.php?codigo={{ invoice.bank_slip.barcode_data }}"><br>
+            {% endif %}
+
+            <br>
+            <a href="{{ invoice.secure_url }}" target="_blank" class="button btn btn-success">{{ invoice.bank_slip.barcode is defined?'<span class="glyphicon glyphicon-barcode" aria-hidden="true"></span> Imprimir Boleto':'<span class="glyphicon glyphicon-search" aria-hidden="true"></span> Visualizar Fatura' }}</a>
+            <br>  <br>
+            Clique <a href="index.php?route=account/order/info&order_id={{ pedido['order_id'] }}">aqui</a> para visualizar detalhes de seu pedido ou para mais informa&ccedil;&otilde;es entre em <a href="index.php?route=information/contact">contato</a> com a loja.
+        </p>
+    </div>
+
+    <script>
+        (function(){
+            var i = document.createElement('iframe');
+            i.style.display = 'none';
+            i.onload = function() { i.parentNode.removeChild(i); };
+            i.src = '{{ iframe }}';
+            document.body.appendChild(i);
+        })();
+    </script>
+
+</div>
+
+{% endif %}
+<br>
+
+{{ footer }}

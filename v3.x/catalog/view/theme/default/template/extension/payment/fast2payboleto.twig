@@ -1,0 +1,52 @@
+<div id="tela-full-fast2pay" role="tabpanel">
+
+    <link href="app/fast2pay/css.css" rel="stylesheet">
+
+    <div class="row">
+        <div class="col-md-12">
+
+
+            <form id="boletoForm" onsubmit="return false;" class="form_pagamento_boleto_fast2pay form-horizontal">
+
+                <input type="hidden" name="pedido" value="{{ pedido['order_id'] }}">
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label"></label>
+                    <div class="col-md-2 selectContainer">
+                        <img src="app/fast2pay/img/boleto-128px.png">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Total</label>
+                    <div class="col-md-10">
+                        {{ total_pedido }} {% if (descbo>0) %} (j&aacute; com {{ descbo }}% de desconto){% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">CPF/CNPJ</label>
+                    <div class="col-md-10">
+                        <input type="text" placeholder="Informe o seu CPF/CNPJ!" onkeypress="return isNumberKeyfast2pay(event)" maxlength="14" style="width:60%" class="form-control" id="cpf" name="cpf" value="{{ fiscal }}" />
+                    </div>
+                </div>
+
+                <div class="form-group buttons">
+                    <div class="col-md-10 col-md-offset-2">
+                        <button class="button btn btn-primary" id="button-confirm"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Concluir Pagamento</button>
+                    </div>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+
+<script>var url_pagar_boleto = '{{ boleto }}';</script>
+<script type="text/javascript" src="app/fast2pay/jquery.validate.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/additional-methods.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/mascara.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/block.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/jquery.payment.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/fast2pay.js?{{ date().timestamp }}"></script>

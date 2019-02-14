@@ -1,0 +1,299 @@
+{{ header }}
+
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.maskmoney/3.0.2/jquery.maskMoney.min.js"></script>
+<script>
+    $(function(){
+        $(".dinheiro").maskMoney({thousands:'', decimal:'.', allowZero:true, suffix: ''});
+    });
+</script>
+
+<style>
+    .form-control-ex input[type="text"],input[type="number"],select,textarea {
+        margin: 3px !important;
+        border: solid 1px #dcdcdc;
+        border-radius:4px;
+        height: 30px;
+    }
+    .help {
+        font-style: italic;
+        font-size: 13px;
+    }
+</style>
+
+{{ column_left }}
+<div id="content">
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="pull-right">
+                <button type="submit" form="form-cod" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+                <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a></div>
+                <h1>{{ heading_title }}</h1>
+                <ul class="breadcrumb">
+                    {% for breadcrumb in breadcrumbs %}
+                    <li><a href="{{ breadcrumb['href'] }}">{{ breadcrumb['text'] }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="container-fluid">
+            {% if (error_warning) %}
+            <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+            </div>
+            {% endif %}
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-pencil"></i> Configura&ccedil;&otilde;es Fast2Pay - Cartão de Crédito</h3>
+                </div>
+                <div class="panel-body">
+                    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-cod" class="form-control-ex">
+
+                        <div role="tabpanel">
+
+
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#configuracoes" aria-controls="configuracoes" role="tab" data-toggle="tab">Configura&ccedil;&otilde;es</a></li>
+                                <li role="presentation"><a href="#status" aria-controls="configuracoes" role="tab" data-toggle="tab">Status</a></li>
+                            </ul>
+
+
+                            <div class="tab-content">
+
+
+                                <div role="tabpanel" class="tab-pane" id="status">
+                                    <table class="table table-striped">
+                                        <tr>
+                                            <td width="250">Status Aguardando Pagamento</td>
+                                            <td><select name="payment_fast2pay_order_status_id">
+                                                {% for order_status in order_statuses %}
+                                                {% if (order_status['order_status_id'] == payment_fast2pay_order_status_id) %}
+                                                <option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+                                                {% else %}
+                                                <option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select></td>
+                                        </tr>
+
+
+                                        <tr>
+                                            <td>Status Pago:</td>
+                                            <td><select name="payment_fast2pay_aprovado">
+                                                {% for order_status in order_statuses %}
+                                                {% if (order_status['order_status_id'] == payment_fast2pay_aprovado) %}
+                                                <option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+                                                {% else %}
+                                                <option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Status Cancelado:</td>
+                                            <td><select name="payment_fast2pay_cancelado">
+                                                {% for order_status in order_statuses %}
+                                                {% if (order_status['order_status_id'] == payment_fast2pay_cancelado) %}
+                                                <option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+                                                {% else %}
+                                                <option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Status Pendente:</td>
+                                            <td><select name="payment_fast2pay_pendente">
+                                                {% for order_status in order_statuses %}
+                                                {% if (order_status['order_status_id'] == payment_fast2pay_pendente) %}
+                                                <option value="{{ order_status['order_status_id'] }}" selected="selected">{{ order_status['name'] }}</option>
+                                                {% else %}
+                                                <option value="{{ order_status['order_status_id'] }}">{{ order_status['name'] }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select></td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div role="tabpanel" class="tab-pane active" id="configuracoes">
+                                    <input type="hidden" name="payment_fast2pay_serial" value="{{ payment_fast2pay_serial }}" size="70" />
+
+                                    <table class="table table-striped">
+                                        <tr>
+                                            <td>Nome do M&oacute;dulo:</td>
+                                            <td><input type="text" name="payment_fast2pay_nome" value="{{ payment_fast2pay_nome }}" size="70" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total minimo:</td>
+                                            <td><input class="dinheiro" type="text" name="payment_fast2pay_total" value="{{ payment_fast2pay_total }}" /></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>{{ entry_geo_zone }}</td>
+                                            <td><select name="payment_fast2pay_geo_zone_id">
+                                                <option value="0">{{ text_all_zones }}</option>
+                                                {% for geo_zone in geo_zones %}
+                                                {% if (geo_zone['geo_zone_id'] == payment_fast2pay_geo_zone_id) %}
+                                                <option value="{{ geo_zone['geo_zone_id'] }}" selected="selected">{{ geo_zone['name'] }}</option>
+                                                {% else %}
+                                                <option value="{{ geo_zone['geo_zone_id'] }}">{{ geo_zone['name'] }}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ entry_status }}</td>
+                                            <td><select name="payment_fast2pay_status">
+                                                {% if (payment_fast2pay_status) %}
+                                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                                <option value="0">{{ text_disabled }}</option>
+                                                {% else %}
+                                                <option value="1">{{ text_enabled }}</option>
+                                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                                {% endif %}
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td>{{ entry_sort_order }}</td>
+                                            <td><input type="text" name="payment_fast2pay_sort_order" value="{{ payment_fast2pay_sort_order }}" size="2" /></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>ID da Conta:</td>
+                                            <td><input type="text" name="payment_fast2pay_afiliacao" value="{{ payment_fast2pay_afiliacao }}" size="40" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Token:</td>
+                                            <td><input type="text" name="payment_fast2pay_chave" value="{{ payment_fast2pay_chave }}" size="70" /></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Parcela Minima:</td>
+                                            <td><input class="dinheiro" type="text" name="payment_fast2pay_min" value="{{ payment_fast2pay_min }}" /> (No minimo 5.00)</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Dividir no maximo:</td>
+                                            <td><input type="number" min="1" max="12" name="payment_fast2pay_div" value="{{ payment_fast2pay_div is not empty?payment_fast2pay_div:1 }}" /> (1 a 12)</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Dividir sem juros:</td>
+                                            <td><input type="number" min="0" max="12" name="payment_fast2pay_sem" value="{{ payment_fast2pay_sem is not empty?payment_fast2pay_sem:1 }}" /> (1 a 12)</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Taxa parcelamento:</td>
+                                            <td><input class="dinheiro" type="text" name="payment_fast2pay_taxa" value="{{ payment_fast2pay_taxa is empty?'7.00':payment_fast2pay_taxa }}" /> (Padr&atilde;o: 7.00 ou de acordo seu contrato)</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Origem CPF</td>
+                                            <td>
+                                                <select name="payment_fast2pay_cpf" id="input-canceled-status" class="form-control">
+                                                    <option value="0" selected="selected">Cliente digita ao finalizar</option>
+                                                    {% for campo in campos %}
+                                                    {% if (campo['custom_field_id'] == payment_fast2pay_cpf) %}
+                                                    <option value="{{ campo['custom_field_id'] }}" selected="selected">{{ campo['name'] }}</option>
+                                                    {% else %}
+                                                    <option value="{{ campo['custom_field_id'] }}">{{ campo['name'] }}</option>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Origem CNPJ</td>
+                                            <td>
+                                                <select name="payment_fast2pay_cnpj" id="input-canceled-status" class="form-control">
+                                                    <option value="0" selected="selected">Cliente digita ao finalizar</option>
+                                                    {% for campo in campos %}
+                                                    {% if (campo['custom_field_id'] == payment_fast2pay_cnpj) %}
+                                                    <option value="{{ campo['custom_field_id'] }}" selected="selected">{{ campo['name'] }}</option>
+                                                    {% else %}
+                                                    <option value="{{ campo['custom_field_id'] }}">{{ campo['name'] }}</option>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Origem N&uacute;mero</td>
+                                            <td>
+                                                <select name="payment_fast2pay_numero" id="input-canceled-status" class="form-control">
+                                                    <option value="0" selected="selected">Vai junto ao logradouro</option>
+                                                    {% for campo in campos %}
+                                                    {% if (campo['custom_field_id'] == payment_fast2pay_numero) %}
+                                                    <option value="{{ campo['custom_field_id'] }}" selected="selected">{{ campo['name'] }}</option>
+                                                    {% else %}
+                                                    <option value="{{ campo['custom_field_id'] }}">{{ campo['name'] }}</option>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Origem Complemento</td>
+                                            <td>
+                                                <select name="payment_fast2pay_com" id="input-canceled-status" class="form-control">
+                                                    <option value="0" selected="selected">Vai junto ao logradouro</option>
+                                                    {% for campo in campos %}
+                                                    {% if (campo['custom_field_id'] == payment_fast2pay_com) %}
+                                                    <option value="{{ campo['custom_field_id'] }}" selected="selected">{{ campo['name'] }}</option>
+                                                    {% else %}
+                                                    <option value="{{ campo['custom_field_id'] }}">{{ campo['name'] }}</option>
+                                                    {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>URL Gatilho (mudan&ccedil;a de estado fatura):</td>
+                                            <td>https://{endereco_site}/index.php?route=extension/payment/fast2payboleto/ipn</td>
+                                        </tr>
+
+                                    </table>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        <!--
+            function isNumberKey(evt){
+                var charCode = (evt.which) ? evt.which : event.keyCode;
+                if (charCode != 46 && charCode > 31
+                && (charCode < 48 || charCode > 57))
+                return false;
+
+                return true;
+            }
+            function abrir(URL) {
+
+                var width = 600;
+                var height = 500;
+
+                var left = 99;
+                var top = 99;
+
+                window.open(URL,'janela', 'width='+width+', height='+height+', top='+top+', left='+left+', scrollbars=yes, status=no, toolbar=no, location=no, directories=no, menubar=no, resizable=no, fullscreen=no');
+
+            }
+            //-->
+        </script>
+
+        {{ footer }}

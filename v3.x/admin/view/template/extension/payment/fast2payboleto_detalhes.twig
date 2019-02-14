@@ -1,0 +1,60 @@
+<h3>Detalhes da transa&ccedil;&atilde;o Fast2Pay</h3>
+<table class="table table-striped table-bordered">
+
+    {% if (invoice.id is not defined) %}
+
+    <tr>
+        <td>Erro: </td>
+        <td>Ops, erro ao consulta fatura Fast2Pay!</td>
+    </tr>
+
+
+    {% else %}
+
+
+    <tr>
+        <td>Transa&ccedil;&atilde;o</td>
+        <td>{{ invoice.transaction_number }}</td>
+    </tr>
+
+    <tr>
+        <td>Forma de Pagamento</td>
+        <td>{{ invoice.bank_slip.barcode is defined?'Boleto':'Cart&atilde;o' }}</td>
+    </tr>
+
+    <tr>
+        <td>Total a Pagar</td>
+        <td>{{ invoice.total }}</td>
+    </tr>
+
+    <tr>
+        <td>Id</td>
+        <td>{{ invoice.id }}</td>
+    </tr>
+
+    <tr>
+        <td>Status Pagamento</td>
+        <td>
+            {% set st = invoice.status %}
+            {% if (st == 'draft') %}
+            'Iniciado'
+            {% elseif (st == 'pending') %}
+            'Pendente'
+            {% elseif (st == 'partially_paid') %}
+            'Parcialmente Pago'
+            {% elseif (st == 'paid') %}
+            'Pago'
+            {% elseif (st == 'canceled') %}
+            'Cancelado'
+            {% elseif (st == 'refunded') %}
+            'Devolvido'
+            {% elseif (st == 'expired') %}
+            'Vencido'
+            {% else %}
+            'Desconhecido'
+            {% endif %}
+        </td>
+    </tr>
+
+    {% endif %}
+</table>

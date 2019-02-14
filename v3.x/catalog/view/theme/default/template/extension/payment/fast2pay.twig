@@ -1,0 +1,116 @@
+<div id="tela-full-fast2pay" role="tabpanel">
+
+    <link href="app/fast2pay/css.css" rel="stylesheet">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <p class="attention alert alert-warning">Informe abaixo os dados do cart&atilde;o de cr&eacute;dito correspondente ao titular do endere&ccedil;o de cobran&ccedil;a informado durante o checkout na loja.</p>
+
+            <form id="creditCardForm" onsubmit="return false;" class="form_pagamento_cartao_fast2pay form-horizontal">
+
+                <input type="hidden" name="pedido" value="{{ pedido['order_id'] }}">
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label"></label>
+                    <div class="col-md-10">
+
+                        <a href="javascript:void(0);"><img class="ccs_fast2pay" id="visa" width="65" src="app/fast2pay/images/visa.gif" border="0"></a>
+
+                        <a href="javascript:void(0);"><img class="ccs_fast2pay" id="mastercard" width="65" src="app/fast2pay/images/mastercard.gif" border="0"></a>
+
+                        <a href="javascript:void(0);"><img class="ccs_fast2pay" id="elo" width="65" src="app/fast2pay/images/elo.gif" border="0"></a>
+
+                        <a href="javascript:void(0);"><img class="ccs_fast2pay" width="65" id="diners" src="app/fast2pay/images/diners.gif" border="0"></a>
+
+                        <a href="javascript:void(0);"><img class="ccs_fast2pay" width="65" id="amex" src="app/fast2pay/images/amex.gif" border="0"></a>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Titular</label>
+                    <div class="col-md-10">
+                        <input type="text" data-fast2pay="full_name" placeholder="Digite o nome do titular!" onkeyup="upFast2pay(this)" onkeydown="upFast2pay(this)" style="width:80%" class="form-control" id="titular" name="titular" value="{{ pedido['payment_firstname'] }} {{ pedido['payment_lastname'] }}" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">CPF/CNPJ</label>
+                    <div class="col-md-10">
+                        <input type="text" placeholder="Digite o CPF/CNPJ do titular!" onkeypress="return isNumberKeyfast2pay(event)" maxlength="14" style="width:60%" class="form-control" id="cpf" name="cpf" value="{{ fiscal }}" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">N&uacute;mero do Cart&atilde;o</label>
+                    <div class="col-md-10">
+                        <input type="text" data-fast2pay="number" onkeyup="qualTipoCartaoFast2pay(this.value);" placeholder="Digite o n&uacute;mero do cart&atilde;o!" maxlength="20" style="width:60%" class="form-control class_input_cartao" id="numero" name="numero" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Validade</label>
+                    <div class="col-md-4">
+                        <select name="validade_cartao_mes" style="width:45%;display: inline;" class="form-control" id="validade_cartao_mes">
+                            <option value="">M&ecirc;s</option>
+                            <option value="01">01 - Janeiro</option>
+                            <option value="02">02 - Feveriro</option>
+                            <option value="03">03 - Mar&ccedil;o</option>
+                            <option value="04">04 - Abril</option>
+                            <option value="05">05 - Maio</option>
+                            <option value="06">06 - Junho</option>
+                            <option value="07">07 - Julho</option>
+                            <option value="08">08 - Agosto</option>
+                            <option value="09">09 - Setembro</option>
+                            <option value="10">10 - Outubro</option>
+                            <option value="11">11 - Novembro</option>
+                            <option value="12">12 - Dezembro</option>
+                        </select>
+                        <select name="validade_cartao_ano" style="width:40%;display: inline;" class="form-control" id="validade_cartao_ano">
+                            <option value="">Ano</option>
+                            {% for i in 0..30 %}
+                            <option value="{{ i+ano }}">{{ i+ano }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <label class="col-md-2 control-label">C&oacute;digo (CVV)</label>
+                    <div class="col-md-4">
+                        <input type="text" data-fast2pay="verification_value" onkeypress="return isNumberKeyfast2pay(event)" maxlength="4" style="width:50%" class="form-control" id="codigo" name="codigo" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Parcela</label>
+                    <div class="col-md-10">
+                        <select name="parcela" style="width:60%" class="form-control" id="parcela">
+                            {{ parcelas }}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group buttons mt-2">
+                    <div class="col-md-10 col-md-offset-2">
+                        <button class="button btn btn-primary" id="button-confirm"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Concluir Pagamento</button>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    var url_pagar_cartao = '{{ cartao }}';
+</script>
+<script type="text/javascript" src="app/fast2pay/jquery.validate.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/additional-methods.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/mascara.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/block.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/bootbox.min.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/jquery.payment.js?{{ date().timestamp }}"></script>
+<script type="text/javascript" src="app/fast2pay/fast2pay.js?{{ date().timestamp }}"></script>
